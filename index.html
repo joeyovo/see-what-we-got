@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>三棵树产品销售单</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
@@ -59,14 +59,15 @@
             <input type="text" id="receiver-address" placeholder="收货地址" required>
         </div><br>
 
+        <!-- 备注 -->
+        <div class="note-group">
+            <label for="note">备注:</label>
+            <textarea id="note" placeholder="输入备注"></textarea>
+        </div><br>
+
         <!-- 总金额 -->
         <label>总金额:</label>
         <input type="number" id="total-price" placeholder="总金额" readonly><br><br>
-        <!-- 备注 -->
-        <div class="note-group">
-        <label for="note">备注:</label>
-        <textarea id="note" placeholder="输入备注"></textarea>
-        </div><br>
 
         <!-- 提交按钮 -->
         <button type="submit" class="submit-button">提交</button>
@@ -75,7 +76,8 @@
     <!-- 提交后显示数据的区域 -->
     <div id="submitted-data"></div>
 
-    <script src="js/inventory.js"></script>
+    <script src="js/scripts.js"></script>
 
 </body>
 </html>
+
