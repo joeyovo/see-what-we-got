@@ -1,0 +1,54 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+.product-group, .shipping-group {
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+label {
+    margin-right: 10px;
+}
+input, select {
+    margin-right: 10px;
+    margin-bottom: 5px;
+}
+.btn {
+    margin-top: 10px;
+}
+#submitted-data {
+    margin-top: 30px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+table, th, td {
+    border: 1px solid #ccc;
+}
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+.remove-button {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+.remove-button:hover {
+    background-color: #ff1a1a;
+}
+.add-button, .submit-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 7px 15px;
+    cursor: pointer;
+}
+.add-button:hover, .submit-button:hover {
+    background-color: #45a049;
+}
