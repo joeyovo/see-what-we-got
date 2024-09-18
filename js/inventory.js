@@ -68,6 +68,9 @@ document.getElementById('inventory-form').addEventListener('submit', function(ev
     // 获取日期
     const date = document.getElementById('date').value;
 
+    // 获取备注信息
+    const note = document.getElementById('note').value;
+
     // 获取所有产品组的数据
     const productGroups = [];
     document.querySelectorAll('.product-group').forEach(group => {
@@ -107,6 +110,7 @@ document.getElementById('inventory-form').addEventListener('submit', function(ev
     // 构建显示的数据HTML
     let dataHTML = `<h2>提交的库存数据</h2>`;
     dataHTML += `<p><strong>日期:</strong> ${date}</p>`;
+    dataHTML += `<p><strong>备注:</strong> ${note}</p>`;
     dataHTML += `<table>
                     <thead>
                         <tr>
@@ -135,4 +139,19 @@ document.getElementById('inventory-form').addEventListener('submit', function(ev
     dataHTML += `<p><strong>总金额:</strong> ${totalPrice}</p>`;
 
     document.getElementById('submitted-data').innerHTML = dataHTML;
+
+    // 保存数据到 localStorage
+    const submittedData = {
+        date,
+        note,
+        productGroups,
+        shippingFee,
+        receiverName,
+        receiverPhone,
+        receiverAddress,
+        totalPrice
+    };
+    const existingData = JSON.parse(localStorage.getItem('submittedData')) || [];
+    existingData.push(submittedData);
+    localStorage.setItem('submittedData', JSON.stringify(existingData));
 });
