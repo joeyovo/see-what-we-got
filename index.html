@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>三棵树产品销售单</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <!-- 引用 CSS 文件 -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 引入 html2canvas 库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
@@ -61,8 +64,8 @@
 
         <!-- 备注 -->
         <div class="note-group">
-            <label for="note">备注:</label>
-            <textarea id="note" placeholder="输入备注"></textarea>
+            <label for="notes">备注:</label>
+            <textarea id="notes" placeholder="输入备注"></textarea>
         </div><br>
 
         <!-- 总金额 -->
@@ -71,13 +74,17 @@
 
         <!-- 提交按钮 -->
         <button type="submit" class="submit-button">提交</button>
+        <!-- 添加下载数据按钮 -->
+        <button type="button" id="download-btn" class="submit-button">下载提交数据</button>
     </form>
 
     <!-- 提交后显示数据的区域 -->
     <div id="submitted-data"></div>
 
-    <script src="js/scripts.js"></script>
+    <!-- 用于显示截图的图片标签 -->
+    <img id="screenshot-img" alt="截图" style="display: none; margin-top: 10px; width: 100%;"/>
+
+    <script src="js/inventory.js"></script> <!-- 引用 JavaScript 文件 -->
 
 </body>
 </html>
-

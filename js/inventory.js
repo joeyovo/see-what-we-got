@@ -69,7 +69,7 @@ document.getElementById('inventory-form').addEventListener('submit', function(ev
     const date = document.getElementById('date').value;
 
     // 获取备注信息
-    const note = document.getElementById('note').value;
+    const notes = document.getElementById('notes').value;
 
     // 获取所有产品组的数据
     const productGroups = [];
@@ -108,9 +108,9 @@ document.getElementById('inventory-form').addEventListener('submit', function(ev
     }
 
     // 构建显示的数据HTML
-    let dataHTML = `<h2>提交的库存数据</h2>`;
+    let dataHTML = `<h2>三棵树产品销售单</h2>`;
     dataHTML += `<p><strong>日期:</strong> ${date}</p>`;
-    dataHTML += `<p><strong>备注:</strong> ${note}</p>`;
+    dataHTML += `<p><strong>备注:</strong> ${notes}</p>`;
     dataHTML += `<table>
                     <thead>
                         <tr>
@@ -143,7 +143,7 @@ document.getElementById('inventory-form').addEventListener('submit', function(ev
     // 保存数据到 localStorage
     const submittedData = {
         date,
-        note,
+        notes,
         productGroups,
         shippingFee,
         receiverName,
@@ -154,4 +154,33 @@ document.getElementById('inventory-form').addEventListener('submit', function(ev
     const existingData = JSON.parse(localStorage.getItem('submittedData')) || [];
     existingData.push(submittedData);
     localStorage.setItem('submittedData', JSON.stringify(existingData));
+});
+
+// 下载提交数据
+document.getElementById('download-btn').addEventListener('click', function() {
+    const submittedData = document.getElementById('submitted-data');
+    if (!submittedData.innerHTML.trim()) {
+        alert('没有提交的数据可供下载。');
+        return;
+    }
+
+    // 使用 html2canvas 进行截图
+    html2canvas(submittedData).then(function(canvas) {
+        // 将截图转换为图片数据
+        const imgData = canvas.toDataURL("image/png");
+
+        // 显示截图图片
+        const imgElement = document.getElementById('screenshot-img');
+        imgElement.src = imgData;
+        imgElement.style.display = 'block'; // 显示图片
+
+        // 触发下载
+        const link = document.createElement('a');
+        link.href = imgData;
+        link.download = '提交的数据.png';
+        link.click();
+    }).catch(function(error) {
+        console.error('截图失败:', error);
+        alert('截图失败，请重试。');
+    });
 });
