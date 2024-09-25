@@ -1,0 +1,108 @@
+/* 基本样式 */
+body {
+    font-family: Arial, sans-serif;
+    padding: 10px;
+    margin: 0;
+}
+
+form {
+    margin: 20px;
+}
+
+input, textarea, button {
+    margin: 5px 0;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* 提交后显示数据的样式 */
+#submitted-data {
+    padding: 20px;
+    background-color: #f9f9f9;
+    margin-top: 20px;
+    border: 1px solid #ccc;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+table, th, td {
+    border: 1px solid #ccc;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+
+.remove-button {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.remove-button:hover {
+    background-color: #ff1a1a;
+}
+
+.add-button, .submit-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 7px 15px;
+    cursor: pointer;
+}
+
+.add-button:hover, .submit-button:hover {
+    background-color: #45a049;
+}
+
+textarea {
+    width: 100%;
+    height: 100px;
+    padding: 5px;
+}
+
+/* 查询截图的样式 */
+#query-results {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    margin-top: 20px;
+}
+
+#query-results img {
+    max-width: 150px;
+    margin: 10px;
+}
+
+/* 响应式设计 */
+@media (max-width: 600px) {
+    form {
+        margin: 10px;
+    }
+    input, textarea, button {
+        width: 100%; /* 输入框和按钮宽度自适应 */
+        box-sizing: border-box;
+    }
+    #submitted-data {
+        padding: 10px;
+    }
+    #query-results {
+        padding: 10px;
+    }
+    #screenshot-img {
+        width: 100%; /* 截图宽度自适应手机屏幕 */
+    }
+    button {
+        padding: 15px;
+        font-size: 18px;
+    }
+}

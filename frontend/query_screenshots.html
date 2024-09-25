@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>查询截图</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        img {
+            max-width: 150px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>查询已储存的截图</h1>
+    <div id="query-results"></div>
+
+    <script>
+        // 查询已储存的截图
+        fetch('/api/query_screenshots')
+            .then(response => response.json())
+            .then(data => {
+                const resultsContainer = document.getElementById('query-results');
+                resultsContainer.innerHTML = ''; // 清空之前的结果
+
+                if (data.length === 0) {
+                    resultsContainer.innerHTML = '<p>没有找到已储存的截图。</p>';
+                    return;
+                }
+
+                data.forEach(item => {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = item.imgData; // 假设后端返回的是 imgData
+                    resultsContainer.appendChild(imgElement);
+
+                    const infoElement = document.createElement('p');
+                    infoElement.innerText = `收货人: ${item.receiverName}, 日期: ${item.date}`;
+                    resultsContainer.appendChild(infoElement);
+                });
+            }).catch(error => {
+                console.error('查询截图失败:', error);
+                alert('查询截图失败，请重试。');
+            });
+    </script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三棵树产品销售单</title>
+    <!-- 引用 CSS 文件 -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 引入 html2canvas 库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+
+    <h1>三棵树产品销售单</h1>
+    
+    <form id="inventory-form">
+        <label for="date">日期:</label>
+        <input type="date" id="date" required><br><br>
+
+        <!-- 产品组 -->
+        <div id="product-groups">
+            <div class="product-group">
+                <label>产品名:</label>
+                <input list="product-names" class="product-name" placeholder="输入或选择产品" required>
+                <datalist id="product-names">
+                    <option value="调色桶">
+                    <option value="滚筒">
+                    <option value="砂架">
+                    <option value="羊毛刷">
+                    <option value="猪毛刷">
+                    <option value="美纹纸">
+                    <option value="弱粘纸胶带">
+                    <option value="55公分保护膜">
+                    <option value="2.4米保护膜">
+                    <option value="1.1米保护膜">
+                    <option value="1.5米保护膜">
+                    <option value="底漆">
+                    <option value="面漆">
+                    <option value="底料">
+                    <option value="面料">
+                    <option value="白胶">
+                    <option value="阴角">
+                    <option value="阳角">
+                    <option value="嵌缝膏">
+                    <option value="大网">
+                    <option value="小网">
+                    <option value="净味防霉防潮面漆">
+                    <option value="硅藻防霉净味">
+                </datalist>
+
+                <label>规格:</label>
+                <input type="text" class="product-spec" placeholder="规格" required>
+
+                <label>数量:</label>
+                <input type="number" class="product-quantity" placeholder="数量" min="1" required>
+
+                <label>色号:</label>
+                <input type="text" class="product-color" placeholder="色号" required>
+                
+                <label>单价:</label>
+                <input type="number" class="product-price" placeholder="单价" min="0" step="0.01" required>
+                
+                
+                <label>组总价:</label>
+                <input type="number" class="product-group-price" placeholder="组总价" readonly>
+
+                <button type="button" class="remove-button" onclick="removeProductGroup(this)">删除</button>
+            </div>
+        </div>
+
+        <button type="button" class="add-button" onclick="addProductGroup()">添加产品</button><br><br>
+
+        <!-- 运费及收货信息 -->
+        <div class="shipping-group">
+            <h2>收货信息</h2>
+            <label for="shipping-fee">运费:</label>
+            <input type="number" id="shipping-fee" placeholder="运费" min="0" step="0.01" required>
+
+            <label for="receiver-name">收货人名称:</label>
+            <input type="text" id="receiver-name" placeholder="收货人名称" required>
+
+            <label for="receiver-phone">收货人电话:</label>
+            <input type="text" id="receiver-phone" placeholder="收货人电话" pattern="\d*" title="请输入数字">
+
+            <label for="receiver-address">收货地址:</label>
+            <input type="text" id="receiver-address" placeholder="收货地址" required>
+        </div><br>
+
+        <!-- 备注 -->
+        <div class="note-group">
+            <label for="notes">备注:</label>
+            <textarea id="notes" placeholder="输入备注"></textarea>
+        </div><br>
+
+        <!-- 总金额 -->
+        <label>总金额:</label>
+        <input type="number" id="total-price" placeholder="总金额" readonly><br><br>
+
+        <!-- 提交按钮 -->
+        <button type="submit" class="submit-button">提交</button>
+        <!-- 添加下载截图按钮 -->
+        <button type="button" id="download-btn" class="submit-button">下载提交数据</button>
+        <!-- 新增的库存计算按钮 -->
+        <button id="calculate-inventory-btn" style="display:none;">计算库存</button>
+        <!-- 查询截图按钮 -->
+        <a href="query_screenshots.html" id="query-screenshot-btn">查询已储存的截图</a>
+
+    </form>
+
+    <!-- 提交后显示数据的区域 -->
+    <div id="submitted-data"></div>
+
+    <!-- 用于显示截图的图片标签 -->
+    <img id="screenshot-img" alt="截图" style="display: none; margin-top: 10px; width: 100%;"/>
+
+    <script src="js/inventory.js"></script> <!-- 引用 JavaScript 文件 -->
+
+</body>
+</html>
