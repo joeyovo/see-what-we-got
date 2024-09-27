@@ -55,7 +55,7 @@
                 <input type="number" class="product-quantity" placeholder="数量" min="1" required>
 
                 <label>色号:</label>
-                <input type="text" class="product-color" placeholder="色号" required>
+                <input type="text" class="product-color" placeholder="色号" >
                 
                 <label>单价:</label>
                 <input type="number" class="product-price" placeholder="单价" min="0" step="0.01" required>
@@ -74,7 +74,7 @@
         <div class="shipping-group">
             <h2>收货信息</h2>
             <label for="shipping-fee">运费:</label>
-            <input type="number" id="shipping-fee" placeholder="运费" min="0" step="0.01" required>
+            <input type="number" id="shipping-fee" placeholder="运费" min="0" step="0.01" >
 
             <label for="receiver-name">收货人名称:</label>
             <input type="text" id="receiver-name" placeholder="收货人名称" required>
@@ -84,6 +84,19 @@
 
             <label for="receiver-address">收货地址:</label>
             <input type="text" id="receiver-address" placeholder="收货地址" required>
+
+            <label>装饰公司:</label>
+            <input list="company-names" class="Interior Decoration" placeholder="输入或选择公司" required>
+            <datalist id="company-names">
+                <!-- 装饰公司选项 -->
+                <option value="中宅装饰">
+                <option value="维美亿家装饰">
+                <option value="春满人间装饰">
+                <option value="品典装饰">
+                <option value="三青鸟装饰">
+                <option value="华佑装饰">
+                <option value="安居装饰">
+            </datalist>
         </div><br>
 
         <!-- 备注 -->
@@ -99,11 +112,15 @@
         <!-- 提交按钮 -->
         <button type="submit" class="submit-button">提交</button>
         <!-- 添加下载截图按钮 -->
-        <button type="button" id="download-btn" class="submit-button">下载提交数据</button>
+        <button type="button" id="download-btn" class="submit-button">截图</button>
         <!-- 新增的库存计算按钮 -->
         <button id="calculate-inventory-btn" style="display:none;">计算库存</button>
-        <!-- 查询截图按钮 -->
-        <a href="query_screenshots.html" id="query-screenshot-btn">查询已储存的截图</a>
+        <!-- 添加上传截图按钮 -->
+        <button type="button" id="upload-btn" class="submit-button">上传截图</button>
+        <!-- 添加文件输入框 -->
+        <input type="file" id="screenshot-file" style="display:none;" accept="image/*">
+        <!-- 查询截图按钮 -->        
+        <a href="query_screenshots.html" id="query-screenshot-btn">查询记录</a>
 
     </form>
 

@@ -19,11 +19,24 @@ button {
 
 /* 提交后显示数据的样式 */
 #submitted-data {
-    padding: 20px;
-    background-color: #f9f9f9;
-    margin-top: 20px;
-    border: 1px solid #ccc;
+    max-width: 148mm; /* 最大宽度为A5宽度 */
+    max-height: 210mm; /* 最大高度为A5高度 */
+    overflow: auto; /* 超出部分使用滚动条 */
+    transform: scale(0.9); /* 适当缩放内容 */
+    transform-origin: top left;
+    box-sizing: border-box;
 }
+
+
+/* 截图的样式 */
+#screenshot-img {
+    max-width: 100%; /* 截图宽度自适应 */
+    height: auto;
+    display: block;
+    margin: 10px 0;
+}
+
+
 
 table {
     width: 100%;
