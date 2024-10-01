@@ -1,0 +1,190 @@
+/// <reference types="@cloudflare/workers-types" />
+
+interface Env {
+  R2_BUCKET: R2Bucket;
+  INVENTORY_KV: KVNamespace;
+}
+
+// 将所有的函数和事件监听器包装在一个导出的默认对象中
+export default {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    return handleRequest(request, env)
+  }
+};
+
+async function handleRequest(request: Request, env: Env): Promise<Response> {
+  try {
+    // CORS 头设置
+    const corsHeaders = {
+      'Access-Control-Allow-Origin': '*', // 在生产环境中，应该设置为特定的域名
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    }
+
+    // 处理 CORS 预检请求
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { headers: corsHeaders })
+    }
+
+    const url = new URL(request.url)
+    const path = url.pathname
+
+    let response: Response
+
+    if (request.method === 'POST') {
+      if (path === '/api/upload_screenshot') {
+        response = await handleUploadScreenshot(request, env)
+      } else if (path === '/api/update_inventory') {
+        response = await handleUpdateInventory(request, env)
+      } else {
+        response = new Response('Not Found', { status: 404 })
+      }
+    } else if (request.method === 'GET') {
+      if (path === '/api/query_screenshots') {
+        response = await handleQueryScreenshots(request, env)
+      } else {
+        response = new Response('Not Found', { status: 404 })
+      }
+    } else {
+      response = new Response('Method Not Allowed', { status: 405 })
+    }
+
+    // 添加 CORS 头到响应
+    Object.keys(corsHeaders).forEach(key => {
+      response.headers.set(key, corsHeaders[key])
+    })
+
+    return response
+  } catch (error) {
+    console.error('请求处理出错:', error)
+    return new Response(JSON.stringify({ success: false, message: '服务器错误' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
+}
+
+async function handleUploadScreenshot(request: Request, env: Env): Promise<Response> {
+  try {
+    const formData = await request.formData()
+    const screenshot = formData.get('screenshot') as File | null
+    const receiverCompany = formData.get('receiverCompany') as string | null
+    const date = formData.get('date') as string | null
+
+    if (!screenshot || !receiverCompany || !date) {
+      return new Response(JSON.stringify({ success: false, message: '缺少必要的信息' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+
+    const fileName = `${date}_${receiverCompany}_${Date.now()}.png`
+
+    await env.R2_BUCKET.put(fileName, screenshot.stream(), {
+      httpMetadata: {
+        contentType: screenshot.type,
+      },
+      customMetadata: {
+        receiverCompany,
+        date,
+      },
+    })
+
+    return new Response(JSON.stringify({ success: true, message: '截图上传成功', fileName }), {
+      headers: { 'Content-Type': 'application/json' }
+    })
+  } catch (error) {
+    console.error('上传截图时出错:', error)
+    return new Response(JSON.stringify({ success: false, message: '上传截图失败' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
+}
+
+async function handleUpdateInventory(request: Request, env: Env): Promise<Response> {
+  try {
+    const { productGroups } = await request.json() as { productGroups: Array<{ productName: string, quantity: string, warehouse: string }> }
+
+    if (!Array.isArray(productGroups) || productGroups.length === 0) {
+      return new Response(JSON.stringify({ success: false, message: '无效的产品数据' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+
+    for (const product of productGroups) {
+      const { productName, quantity, warehouse } = product
+      if (!productName || !quantity || !warehouse) {
+        continue // 跳过无效的产品数据
+      }
+
+      const key = `inventory:${warehouse}:${productName}`
+      const currentQuantity = await env.INVENTORY_KV.get(key) || '0'
+      const newQuantity = parseInt(currentQuantity) - parseInt(quantity)
+
+      if (newQuantity < 0) {
+        return new Response(JSON.stringify({ success: false, message: `${productName}库存不足` }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        })
+      }
+
+      await env.INVENTORY_KV.put(key, newQuantity.toString())
+    }
+
+    return new Response(JSON.stringify({ success: true, message: '库存更新成功' }), {
+      headers: { 'Content-Type': 'application/json' }
+    })
+  } catch (error) {
+    console.error('更新库存时出错:', error)
+    return new Response(JSON.stringify({ success: false, message: '更新库存失败' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
+}
+
+async function handleQueryScreenshots(request: Request, env: Env): Promise<Response> {
+  try {
+    const url = new URL(request.url)
+    const company = url.searchParams.get('company')
+    const startDate = url.searchParams.get('startDate')
+    const endDate = url.searchParams.get('endDate')
+
+    if (!company || !startDate || !endDate) {
+      return new Response(JSON.stringify({ success: false, message: '缺少必要的查询参数' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+
+    const screenshots = []
+    const objects = await env.R2_BUCKET.list({
+      prefix: `${startDate}_${company}`,
+      delimiter: '/',
+    })
+
+    for (const object of objects.objects) {
+      const [objectDate, objectCompany] = object.key.split('_')
+      if (objectDate <= endDate && objectCompany === company) {
+        screenshots.push({
+          fileName: object.key,
+          uploadDate: objectDate,
+          company: objectCompany,
+          url: await env.R2_BUCKET.createSignedUrl(object, { expiresIn: 3600 }) // 创建一个有效期为1小时的签名URL
+        })
+      }
+    }
+
+    return new Response(JSON.stringify({ success: true, screenshots }), {
+      headers: { 'Content-Type': 'application/json' }
+    })
+  } catch (error) {
+    console.error('查询截图时出错:', error)
+    return new Response(JSON.stringify({ success: false, message: '查询截图失败' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
+}

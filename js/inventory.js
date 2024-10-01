@@ -123,43 +123,56 @@ document.getElementById('inventory-form').addEventListener('submit', function(ev
     const receiverPhone = document.getElementById('receiver-phone').value;
     const receiverAddress = document.getElementById('receiver-address').value;
 
-    // 获取总金额
-    const totalPrice = document.getElementById('total-price').value;
+    // 获取总金额（确保获取的元素存在）
+const totalPriceElement = document.getElementById('total-price');
+const totalPrice = totalPriceElement ? totalPriceElement.value : "";
 
-    // 显示数据
-    let dataHTML = `<h2>三棵树产品销售单</h2>`;
-    dataHTML += `<p><strong>日期:</strong> ${date}</p>`;
-    dataHTML += `<p><strong>收货人电话:</strong> ${receiverPhone}</p>`;
-    dataHTML += `<p><strong>收货人名称:</strong> ${receiverName}</p>`;
-    dataHTML += `<p><strong>收货地址:</strong> ${receiverAddress}</p>`;
-    dataHTML += `<table>
-                    <thead>
-                        <tr>
-                            <th>产品名</th>
-                            <th>规格</th>
-                            <th>数量</th>
-                            <th>色号</th>
-                            <th>单价</th>
-                            <th>组总价</th>
-                        </tr>
-                    </thead>
-                    <tbody>`;
-    productGroupsForDisplay.forEach(group => {
-        dataHTML += `<tr>
-                        <td>${group.productName}</td>
-                        <td>${group.productSpec}</td>
-                        <td>${group.quantity}</td>
-                        <td>${group.color}</td>
-                        <td>${group.price}</td>
-                        <td>${group.groupPrice}</td>
-                    </tr>`;
-    });
-    dataHTML += `</tbody></table>`;
-    dataHTML += `<p><strong>运费:</strong> ${shippingFee}</p>`;    
-    dataHTML += `<p><strong>总金额:</strong> ${totalPrice}</p>`;
-    dataHTML += `<p><strong>备注:</strong> ${notes}</p>`;
+// 修复选择器问题：类名带空格的选择器需要用 `.` 替代空格
+const interiorDecoratorElement = document.querySelector('.Interior-Decoration');
+const interiorDecorator = interiorDecoratorElement ? interiorDecoratorElement.value : "";
+console.log('Interior Decorator:', interiorDecorator);
+// 显示数据
+let dataHTML = `<h2>三棵树产品销售单</h2>`;
+dataHTML += `<p><strong>日期:</strong> ${date}</p>`;
+dataHTML += `<p><strong>装饰公司:</strong> ${interiorDecorator}</p>`;
+dataHTML += `<p><strong>收货人电话:</strong> ${receiverPhone}</p>`;
+dataHTML += `<p><strong>收货人名称:</strong> ${receiverName}</p>`;
+dataHTML += `<p><strong>收货地址:</strong> ${receiverAddress}</p>`;
+dataHTML += `<table>
+                <thead>
+                    <tr>
+                        <th>产品名</th>
+                        <th>规格</th>
+                        <th>数量</th>
+                        <th>色号</th>
+                        <th>单价</th>
+                        <th>组总价</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+productGroupsForDisplay.forEach(group => {
+    dataHTML += `<tr>
+                    <td>${group.productName}</td>
+                    <td>${group.productSpec}</td>
+                    <td>${group.quantity}</td>
+                    <td>${group.color}</td>
+                    <td>${group.price}</td>
+                    <td>${group.groupPrice}</td>
+                </tr>`;
+});
+dataHTML += `</tbody></table>`;
+dataHTML += `<p><strong>运费:</strong> ${shippingFee}</p>`;    
+dataHTML += `<p><strong>总金额:</strong> ${totalPrice}</p>`;
+dataHTML += `<p><strong>备注:</strong> ${notes}</p>`;
 
-    document.getElementById('submitted-data').innerHTML = dataHTML;
+// 设置已提交数据的 HTML 内容
+const submittedDataElement = document.getElementById('submitted-data');
+if (submittedDataElement) {
+    submittedDataElement.innerHTML = dataHTML;
+} else {
+    console.error('Element with ID "submitted-data" not found.');
+}
+
 
     // 显示下载截图按钮和库存计算按钮
     document.getElementById('download-btn').style.display = 'block';

@@ -1,0 +1,17 @@
+name = "warehouse-backend"
+type = "javascript"
+
+account_id = "b07ae89c9d01314f264bc4841e240284"  # Cloudflare 账户 ID
+workers_dev = true
+compatibility_date = "2023-09-28"  # 更新为你需要的日期
+
+[[kv_namespaces]]
+binding = "总库存"  # 替换为你的 KV 命名空间名称
+id = "f090ce3738f04439ac7c5cf5675ec27a"  # Cloudflare KV 命名空间 ID
+
+[[r2_buckets]]
+binding = "R2_BUCKET"  # 替换为你的 R2 Bucket 名称
+bucket_name = "screenshots-warehouse"  # R2 Bucket 名称
+
+[vars]
+ENVIRONMENT = "production"  # 可以根据需求设置为 "production" 或 "development"
