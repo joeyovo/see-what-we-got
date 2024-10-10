@@ -34,7 +34,7 @@ function addProductGroup() {
         <input type="text" class="product-spec" placeholder="规格" required>
 
         <label>数量:</label>
-        <input type="number" class="product-quantity" placeholder="数量" min="1" required>
+        <input type="number" class="product-quantity" placeholder="数量" required>
 
         <label>色号:</label>
         <input type="text" class="product-color" placeholder="色号"> <!-- 移除 required 属性 -->
