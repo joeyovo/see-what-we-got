@@ -36,8 +36,8 @@ function addProductGroup() {
         <label>数量:</label>
         <input type="number" class="product-quantity" placeholder="数量" required>
 
-        <label>色号:</label>
-        <input type="text" class="product-color" placeholder="色号"> <!-- 移除 required 属性 -->
+        <label>调色费:</label>
+        <input type="text" class="product-colorfee" placeholder="调色费" min="0" step="any"> 
 
         <label>单价:</label>
         <input type="number" class="product-price" placeholder="单价" min="0" step="0.01" required>
@@ -56,17 +56,30 @@ function removeProductGroup(button) {
     calculateTotalPrice();
 }
 
-// 实时计算组总价和总金额
 document.addEventListener('input', function(event) {
-    if (event.target.classList.contains('product-quantity') || event.target.classList.contains('product-price')) {
+    // 监听数量、调色费、单价的变化
+    if (event.target.classList.contains('product-quantity') ||
+        event.target.classList.contains('product-colorfee') ||
+        event.target.classList.contains('product-price')) {
+
+        // 找到包含输入元素的组    
         const group = event.target.closest('.product-group');
         const quantity = parseFloat(group.querySelector('.product-quantity').value) || 0;
         const price = parseFloat(group.querySelector('.product-price').value) || 0;
+        const colorfee = parseFloat(group.querySelector('.product-colorfee').value) || 0;
+
+        // 获取组单价元素
         const groupPrice = group.querySelector('.product-group-price');
-        groupPrice.value = (quantity * price).toFixed(2);
+        
+        // 计算并更新组单价
+        groupPrice.value = (quantity * price + colorfee).toFixed(2);
+
+        // 更新总金额
         calculateTotalPrice();
     }
-    if (event.target.id === 'shipping-fee') {
+
+    // 监听运费变化
+    if (event.target.id === 'shipping-fee' || event.target.id === 'doorstep-fee') {
         calculateTotalPrice();
     }
 });
@@ -74,15 +87,23 @@ document.addEventListener('input', function(event) {
 // 计算总金额
 function calculateTotalPrice() {
     let totalPrice = 0;
+
+    // 计算所有组的总价
     document.querySelectorAll('.product-group-price').forEach(groupPrice => {
         totalPrice += parseFloat(groupPrice.value) || 0;
     });
 
-    const shippingFee = parseFloat(document.getElementById('shipping-fee').value) || 0; // 当运费为空时，设为 0
-    totalPrice += shippingFee;
+    // 获取运费和搬运费
+    const shippingFee = parseFloat(document.getElementById('shipping-fee').value) || 0; // 运费
+    const doorstepFee = parseFloat(document.getElementById('doorstep-fee').value) || 0; // 搬运费
 
+    // 计算总金额（包含运费和搬运费）
+    totalPrice += shippingFee + doorstepFee;
+
+    // 更新总金额的显示
     document.getElementById('total-price').value = totalPrice.toFixed(2);
 }
+
 
 // 处理表单提交并显示数据，不立即计算库存
 document.getElementById('inventory-form').addEventListener('submit', function(event) {
@@ -99,7 +120,7 @@ document.getElementById('inventory-form').addEventListener('submit', function(ev
     document.querySelectorAll('.product-group').forEach(group => {
         const productName = group.querySelector('.product-name').value;
         const productSpec = group.querySelector('.product-spec').value;
-        const color = group.querySelector('.product-color').value || ""; // 允许色号为空
+        const colorfee = group.querySelector('.product-colorfee').value || 0; 
         const quantity = group.querySelector('.product-quantity').value;
         const price = group.querySelector('.product-price').value;
         const groupPrice = group.querySelector('.product-group-price').value;
@@ -110,7 +131,7 @@ document.getElementById('inventory-form').addEventListener('submit', function(ev
                 productName,
                 productSpec,
                 quantity,
-                color,
+                colorfee,
                 price,
                 groupPrice
             });
@@ -119,6 +140,7 @@ document.getElementById('inventory-form').addEventListener('submit', function(ev
 
     // 获取运费和收货信息
     const shippingFee = document.getElementById('shipping-fee').value || "0"; // 当运费为空时，显示为 0
+    const doorstepFee = document.getElementById('doorstep-fee').value || "0"; // 当搬运费为空时，显示为 0
     const receiverName = document.getElementById('receiver-name').value;
     const receiverPhone = document.getElementById('receiver-phone').value;
     const receiverAddress = document.getElementById('receiver-address').value;
@@ -144,8 +166,8 @@ dataHTML += `<table>
                         <th>产品名</th>
                         <th>规格</th>
                         <th>数量</th>
-                        <th>色号</th>
                         <th>单价</th>
+                        <th>调色费</th>
                         <th>组总价</th>
                     </tr>
                 </thead>
@@ -155,13 +177,14 @@ productGroupsForDisplay.forEach(group => {
                     <td>${group.productName}</td>
                     <td>${group.productSpec}</td>
                     <td>${group.quantity}</td>
-                    <td>${group.color}</td>
                     <td>${group.price}</td>
+                    <td>${group.colorfee}</td>
                     <td>${group.groupPrice}</td>
                 </tr>`;
 });
 dataHTML += `</tbody></table>`;
-dataHTML += `<p><strong>运费:</strong> ${shippingFee}</p>`;    
+dataHTML += `<p><strong>运费:</strong> ${shippingFee}</p>`;  
+dataHTML += `<p><strong>搬运费:</strong> ${doorstepFee}</p>`;  
 dataHTML += `<p><strong>总金额:</strong> ${totalPrice}</p>`;
 dataHTML += `<p><strong>备注:</strong> ${notes}</p>`;
 
