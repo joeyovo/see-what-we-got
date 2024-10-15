@@ -1,50 +1,103 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>查询截图</title>
+    <title>三棵树销售单查询系统</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
             padding: 20px;
         }
-        img {
-            max-width: 150px;
-            margin: 10px;
+        h1 {
+            text-align: center;
+        }
+        .query-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .query-form input, .query-form button {
+            padding: 10px;
+            font-size: 16px;
+        }
+        .query-form button {
+            grid-column: span 2;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .query-form button:hover {
+            background-color: #45a049;
+        }
+        #results {
+            border: 1px solid #ddd;
+            padding: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>查询已储存的截图</h1>
-    <div id="query-results"></div>
+    <h1>销售单多条件查询系统</h1>
+    <div class="query-form">
+        <input type="date" id="dateQuery" placeholder="选择日期（可选）">
+        <input type="text" id="recipientQuery" placeholder="收货人名称（可选）">
+        <input type="text" id="companyQuery" placeholder="装修公司（可选）">
+        <button onclick="queryOrders()">查询</button>
+    </div>
+    <div id="results"></div>
 
     <script>
-        // 查询已储存的截图
-        fetch('/api/query_screenshots')
-            .then(response => response.json())
-            .then(data => {
-                const resultsContainer = document.getElementById('query-results');
-                resultsContainer.innerHTML = ''; // 清空之前的结果
+        async function queryOrders() {
+            const date = document.getElementById('dateQuery').value;
+            const recipient = document.getElementById('recipientQuery').value;
+            const company = document.getElementById('companyQuery').value;
+            const resultsDiv = document.getElementById('results');
 
-                if (data.length === 0) {
-                    resultsContainer.innerHTML = '<p>没有找到已储存的截图。</p>';
+            try {
+                // 构建查询参数
+                const params = new URLSearchParams();
+                if (date) params.append('date', date);
+                if (recipient) params.append('recipient', recipient);
+                if (company) params.append('company', company);
+
+                // 这里应该是您的后端API地址
+                const response = await axios.get(`/api/orders?${params.toString()}`);
+                const orders = response.data;
+
+                if (orders.length === 0) {
+                    resultsDiv.innerHTML = '<p>未找到订单</p>';
                     return;
                 }
 
-                data.forEach(item => {
-                    const imgElement = document.createElement('img');
-                    imgElement.src = item.imgData; // 假设后端返回的是 imgData
-                    resultsContainer.appendChild(imgElement);
-
-                    const infoElement = document.createElement('p');
-                    infoElement.innerText = `收货人: ${item.receiverName}, 日期: ${item.date}`;
-                    resultsContainer.appendChild(infoElement);
+                let html = '<h2>查询结果：</h2>';
+                orders.forEach((order, index) => {
+                    html += `
+                        <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+                            <h3>订单 ${index + 1}</h3>
+                            <p><strong>收货人：</strong>${order.recipient}</p>
+                            <p><strong>配送方式：</strong>${order.delivery_method}</p>
+                            <p><strong>产品：</strong></p>
+                            <ul>
+                                ${order.products.map(product => `
+                                    <li>${product.product_name}: ${product.quantity} ${product.unit}</li>
+                                `).join('')}
+                            </ul>
+                            ${order.company ? `<p><strong>装修公司：</strong>${order.company}</p>` : ''}
+                        </div>
+                    `;
                 });
-            }).catch(error => {
-                console.error('查询截图失败:', error);
-                alert('查询截图失败，请重试。');
-            });
+
+                resultsDiv.innerHTML = html;
+            } catch (error) {
+                console.error('Error fetching orders:', error);
+                resultsDiv.innerHTML = '<p>获取订单信息时出错，请稍后再试</p>';
+            }
+        }
     </script>
 </body>
 </html>
