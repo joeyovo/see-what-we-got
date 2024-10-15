@@ -71,10 +71,18 @@ th, td {
     border: none;
     padding: 7px 15px;
     cursor: pointer;
+    text-decoration: none; /* 去除下划线 */
+    display: inline-block; /* 保持块级行为 */
+    line-height: normal; /* 设置一致的行高 */
+    vertical-align: middle; /* 垂直对齐 */
+    font-size: 16px; /* 设置字体大小 */
+    font-family: inherit; /* 确保与父元素一致的字体 */
+
 }
 
 .add-button:hover, .submit-button:hover {
     background-color: #45a049;
+    text-decoration: none; /* 确保悬停时也没有下划线 */
 }
 
 textarea {
