@@ -25,11 +25,18 @@ h1 {
     margin-bottom: 20px;
 }
 
+/* 响应式设计：适应小屏幕 */
 .date-range, .search-fields {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
     margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+    .date-range, .search-fields {
+        grid-template-columns: 1fr; /* 小屏幕下改为单列布局 */
+    }
 }
 
 .input-group {
@@ -53,6 +60,7 @@ input {
     display: flex;
     gap: 10px;
     justify-content: center;
+    flex-wrap: wrap; /* 确保按钮在小屏幕下不会溢出 */
 }
 
 button {
@@ -131,4 +139,33 @@ button {
     color: #f44336;
     text-align: center;
     padding: 20px;
+}
+
+/* 进一步优化手机端显示 */
+@media (max-width: 600px) {
+    .container {
+        padding: 15px; /* 减小边距，适应小屏幕 */
+    }
+    
+    input {
+        padding: 8px; /* 缩小输入框内边距以适应屏幕 */
+    }
+
+    button {
+        padding: 10px 15px; /* 调整按钮大小 */
+        font-size: 12px; /* 缩小字体以适应屏幕 */
+    }
+
+    .order-card {
+        padding: 10px; /* 调整卡片的内边距 */
+    }
+
+    h1 {
+        font-size: 22px; /* 调整标题大小 */
+        margin-bottom: 20px;
+    }
+    
+    .no-results, .error-message {
+        padding: 10px; /* 调整无结果和错误消息的内边距 */
+    }
 }
